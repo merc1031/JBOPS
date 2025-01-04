@@ -510,7 +510,7 @@ if __name__ == '__main__':
         plexTo = []
 
         for user, server_name in opts.userTo:
-            plexTo.append([user, check_users_access(plex_access, user, server_name, libraries)])
+            plexTo.append([user, server_name, check_users_access(plex_access, user, server_name, libraries)])
 
         for _library in libraries:
             watched_lst = []
@@ -520,6 +520,7 @@ if __name__ == '__main__':
                     # Getting all watched history for userFrom
                     tt_watched = tautulli_server.get_watched_history(user=userFrom, section_id=_library.key,
                                                                      start=start, length=count)
+
                     if all([tt_watched]):
                         start += count
                         for item in tt_watched:
@@ -529,15 +530,16 @@ if __name__ == '__main__':
                         break
                     start += count
             else:
+                print(f"Asking plex")
                 # Check library for watched items
                 sectionFrom = watchedFrom.library.section(_library.title)
                 watched_lst = batching_watched(sectionFrom, _library.type)
 
             for user in plexTo:
-                username, server = user
+                username, server, server_conn = user
                 if server == serverFrom:
                     same_server = True
-                sync_watch_status(watched_lst, _library.title, server, username, same_server)
+                sync_watch_status(watched_lst, _library.title, server_conn, username, same_server)
 
     elif opts.ratingKey and serverFrom == "Tautulli":
         plexTo = []
