@@ -403,31 +403,40 @@ def sync_watch_status(watched, section, accountTo, userTo, same_server=False):
                 print("Synced watched status of {} to account {}...".format(title, userTo))
 
         except Exception as e:
-            print(e)
+            print(f"{section=} {sectionTo=} {e=}")
             pass
 
 
 def batching_watched(section, libtype):
+    max_count = 100
     count = 100
     start = 0
     watched_lst = []
     while True:
     
+        print(f"  {start=} {count=}")
         if libtype == 'show':
-            search_watched = section.search(libtype='episode', container_start=start, container_size=count,
-                                         **{'show.unwatchedLeaves': False})
+            search_watched = section.search(container_start=start, container_size=count, sort="year:desc", maxresults=max_count,
+                                         unwatched=False)
+            num = len(search_watched)
+            if num == 0:
+                break
+            start += num
+            for item in search_watched:
+                episodes = item.watched()
+                for episode in episodes:
+                    if episode not in watched_lst:
+                        watched_lst.append(episode)
         else:
             search_watched = section.search(unwatched=False, container_start=start, container_size=count)
-        if all([search_watched]):
-            start += count
+            num = len(search_watched)
+            if num == 0:
+                break
+            start += num
             for item in search_watched:
                 if item not in watched_lst:
                     watched_lst.append(item)
-            continue
-        elif not all([search_watched]):
-            break
-        start += count
-        
+
     return watched_lst
 
 
