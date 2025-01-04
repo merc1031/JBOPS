@@ -72,11 +72,11 @@ TAUTULLI_URL = ''
 TAUTULLI_APIKEY = ''
 
 if not PLEX_TOKEN:
-    PLEX_TOKEN = CONFIG.data['auth'].get('server_token')
+    PLEX_TOKEN = CONFIG.get('auth.server_token')
 if not TAUTULLI_URL:
-    TAUTULLI_URL = CONFIG.data['auth'].get('tautulli_baseurl')
+    TAUTULLI_URL = CONFIG.get('auth.tautulli_baseurl')
 if not TAUTULLI_APIKEY:
-    TAUTULLI_APIKEY = CONFIG.data['auth'].get('tautulli_apikey')
+    TAUTULLI_APIKEY = CONFIG.get('auth.tautulli_apikey')
 
 VERIFY_SSL = False
 
